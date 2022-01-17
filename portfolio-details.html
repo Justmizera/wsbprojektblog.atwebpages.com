@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+        <html lang="en">
+        
+        <head>
+          <meta charset="utf-8">
+          <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        
+          <title>Portfolio Details - Laura Bootstrap Template</title>
+          <meta content="" name="description">
+          <meta content="" name="keywords">
+          <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+          <link href="comments.css" rel="stylesheet" type="text/css">
+        
+          <!-- Favicons -->
+          <link href="assets/img/favicon.png" rel="icon">
+          <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+        
+          <!-- Google Fonts -->
+          <link
+            href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Satisfy"
+            rel="stylesheet">
+        
+          <!-- Vendor CSS Files -->
+          <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+          <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+          <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+          <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+          <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+        
+          <!-- Template Main CSS File -->
+          <link href="assets/css/style.css" rel="stylesheet">
+        
+          <!-- =======================================================
+          * Template Name: Laura - v4.7.0
+          * Template URL: https://bootstrapmade.com/laura-free-creative-bootstrap-theme/
+          * Author: BootstrapMade.com
+          * License: https://bootstrapmade.com/license/
+          ======================================================== -->
+        </head>
+        
+        <body>
+        
+          <!-- ======= Header ======= -->
+          <header id="header" class="fixed-top d-flex justify-content-center align-items-center ">
+        
+            <nav id="navbar" class="navbar">
+              <ul>
+        <li><a class="nav-link scrollto active" href="index.html">Strona główna</a></li>
+        <li><a class="nav-link scrollto " href="#portfolio">Wpisy</a></li>
+        <li><a class="nav-link scrollto" href="#services">O nas</a></li>
+        <li><a class="nav-link scrollto" href="#contact">Kontakt</a></li>
+        <?php 
+        if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+        echo "<li class='nav-link scrollto'><a href='logout.php'>Wyloguj się</a></li>";
+        echo "<li class='nav-link scrollto'><a href='reset-password.php'>Zresetuj hasło</a></li>";
+        echo "<li style='color:white'><b>";
+        echo htmlspecialchars($_SESSION["username"]); 
+        echo ", witaj na naszej stronie! </b></li>";
+        }
+        else{
+        echo "<li><a class='nav-link scrollto' href='/login.php'>Zaloguj się</a></li>";
+        echo "<li><a class='nav-link scrollto' href='/register.php'>Zarejestruj się</a></li>";
+        }
+        ?>
+     
+      </ul>
+              <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav><!-- .navbar -->
+        
+          </header><!-- End Header -->
+        
+          <main id="main">
+            <br>
+            <br>
+            <br>
+            <br>
+        
+            <!-- ======= Portfolio Details Section ======= -->
+            <section id="portfolio-details" class="portfolio-details">
+              <div class="container">
+                <?php
+                $pol=mysqli_connect("fdb34.awardspace.net","4016277_justyna","Projekt123!","4016277_justyna") or die ('Brak połączenia z serwerem');
+                $pol->set_charset("utf8");
+                $sql="SELECT * FROM posts WHERE id='" . $_GET["userid"] . "'";
+                $id = $_GET["userid"];
+                $result=mysqli_query($pol,$sql);
+                
+                $row = $result->fetch_assoc();
+        
+                $title = $row["title"];
+                $author = $row["author"];
+                $image = $row["image"];
+                $type =  $row["type"];
+                $content =  $row["content"];
+                
+        
+                mysqli_close($pol);
+                ?>
+        
+                <div class="row gy-4">
+        
+                  <div class="col-lg-8">
+                    <div class="portfolio-img"><img src="<?php echo $image ?>" style="width: 100%; object-fit: cover;"
+                        class="img-fluid" alt=""></div>
+                  </div>
+        
+        
+        
+                  <div class="col-lg-4">
+        
+                    <div class="portfolio-description">
+                      <h2>Zapoznaj się z opisem tego magicznego miejsca</h2>
+                      <p><?php echo $content ?></p>
+                    </div>
+                  </div>
+        
+                </div>
+                <div class="col-lg-4">
+                  <div class="portfolio-info">
+                    <h3>Szczegóły wpisu</h3>
+                    <ul>
+                      <li><strong>Autor</strong>: <?php echo $author ?></li>
+                      <li><strong><?php echo $type ?></strong>: <?php echo $title ?></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="row gy-4">
+        
+                </div>
+        
+              </div>
+              <!-- JG CODE -->
+              
+                      <!-- JG CODE Comment -->
+        
+        <div class="comments"></div>
+
+<script>
+var post_id = "<?php echo $_GET['userid']; ?>";
+
+const comments_page_id = post_id; // This number should be unique on every page
+fetch("comments.php?page_id=" + comments_page_id).then(response => response.text()).then(data => {
+	document.querySelector(".comments").innerHTML = data;
+	document.querySelectorAll(".comments .write_comment_btn, .comments .reply_comment_btn").forEach(element => {
+		element.onclick = event => {
+			event.preventDefault();
+			document.querySelectorAll(".comments .write_comment").forEach(element => element.style.display = 'none');
+			document.querySelector("div[data-comment-id='" + element.getAttribute("data-comment-id") + "']").style.display = 'block';
+			document.querySelector("div[data-comment-id='" + element.getAttribute("data-comment-id") + "'] input[name='name']").focus();
+		};
+	});
+	document.querySelectorAll(".comments .write_comment form").forEach(element => {
+		element.onsubmit = event => {
+			event.preventDefault();
+			fetch("comments.php?page_id=" + comments_page_id, {
+				method: 'POST',
+				body: new FormData(element)
+			}).then(response => response.text()).then(data => {
+				element.parentElement.innerHTML = data;
+			});
+		};
+	});
+});
+</script>
+        <!-- END JG CODE Comment -->
+                     
+              <!-- END JG CODE -->     
+              
+      
+            </section><!-- End Portfolio Details Section -->
+        
+          </main><!-- End #main -->
+        
+        <!-- ======= Footer ======= -->
+        <footer id="footer">
+          <div class="container">
+            <h3>Travel lovers</h3>
+            <p>Jesteśmy miłośnikami podróży i odkrywania nowych zakątków świata</p>
+        
+            <div class="social-links">
+              <a href="https://twitter.com/" class="twitter"><i class="bx bxl-twitter"></i></a>
+              <a href="https://facebook.com/" class="facebook"><i class="bx bxl-facebook"></i></a>
+              <a href="https://instagram.com/" class="instagram"><i class="bx bxl-instagram"></i></a>
+            </div>
+ <?php
+      if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true && isset($_SESSION["username"]) && $_SESSION["username"] === "admin" ){
+      echo "<p><a href='/admin_site.html'>Panel administratora</a></p>";
+      }
+      ?>
+            <div class="copyright">
+              &copy; Copyright <strong><span>Laura</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+              <!-- All the links in the footer should remain intact. -->
+              <!-- You can delete the links only if you purchased the pro version. -->
+              <!-- Licensing information: https://bootstrapmade.com/license/ -->
+              <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/laura-free-creative-bootstrap-theme/ -->
+              Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+            </div>
+          </div>
+        </footer><!-- End Footer -->
+        
+          <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+              class="bi bi-arrow-up-short"></i></a>
+        
+          <!-- Vendor JS Files -->
+          <script src="assets/vendor/purecounter/purecounter.js"></script>
+          <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+          <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+          <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+          <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+          <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
+          <script src="assets/vendor/php-email-form/validate.js"></script>
+        
+          <!-- Template Main JS File -->
+          <script src="assets/js/main.js"></script>
+        </body>
+        
+        </html>
